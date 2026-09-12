@@ -3,9 +3,7 @@ info:
   title: People API
   version: 1.0.0
   description: >
-    Отдельный сервис людей. Он хранит сотрудников и связи many-to-many с
-    организациями, а операции /orgmanager при необходимости вызывают API
-    сервиса организаций.
+    Сервис управления сотрудниками
 
 servers:
   - url: http://localhost:8081/orgmanager
@@ -52,6 +50,8 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/Person'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
 
@@ -84,15 +84,16 @@ paths:
       responses:
         '204':
           description: Deleted
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /merge/{id1}/{id2}/{newName}/{newAddress}:
+  /merge/{id1}/{id2}/new-name/new-address:
     post:
-      summary: Merge organizations
+      summary: Объединить две организации
       description: >
-        Создать новую организацию через API сервиса организаций и перевести в
-        нее всех сотрудников двух исходных организаций.
+        Объединить организации, создав новую и зачислив в неё всех сотрудников двух исходных
       parameters:
         - name: id1
           in: path
@@ -108,18 +109,12 @@ paths:
             type: integer
             format: int64
             minimum: 1
-        - name: newName
-          in: path
-          required: true
-          schema:
-            type: string
-            minLength: 1
-        - name: newAddress
-          in: path
-          required: true
-          schema:
-            type: string
-            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/OrganizationInput'
       responses:
         '201':
           description: Merged organization created
@@ -134,13 +129,15 @@ paths:
 
   /fire/all/{id}:
     post:
-      summary: Fire all organization employees
-      description: Удалить связи всех сотрудников с организацией с указанным id.
+      summary: Уволить всех сотрудников организации
+      description: Уволить всех сотрудников организации с указанным id
       parameters:
         - $ref: '#/components/parameters/Id'
       responses:
         '204':
           description: All employees fired
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
 
@@ -223,6 +220,68 @@ components:
           minimum: 1
         name:
           type: string
+
+    OrganizationInput:
+      type: object
+      description: Данные новой организации
+      xml:
+        name: organization
+      required:
+        - name
+        - coordinates
+        - annualTurnover
+        - fullName
+        - postalAddress
+      properties:
+        name:
+          type: string
+          minLength: 1
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        annualTurnover:
+          type: number
+          format: float
+          minimum: 0
+          exclusiveMinimum: true
+        fullName:
+          type: string
+        type:
+          $ref: '#/components/schemas/OrganizationType'
+        postalAddress:
+          $ref: '#/components/schemas/Address'
+
+    Coordinates:
+      type: object
+      required:
+        - x
+      properties:
+        x:
+          type: integer
+          format: int64
+          maximum: 775
+        y:
+          type: integer
+          format: int64
+
+    Address:
+      type: object
+      required:
+        - street
+        - zipCode
+      properties:
+        street:
+          type: string
+          minLength: 1
+        zipCode:
+          type: string
+
+    OrganizationType:
+      type: string
+      nullable: true
+      enum:
+        - PUBLIC
+        - TRUST
+        - OPEN_JOINT_STOCK_COMPANY
 
     Error:
       type: object

@@ -155,6 +155,66 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  /organizations/type/{type}:
+    delete:
+      summary: Delete one organization by type
+      description: Удаляет один любой объект, значение type которого равно заданному.
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationType'
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /organizations/count-by-annual-turnover:
+    get:
+      summary: Count organizations by annualTurnover
+      description: Возвращает количество объектов, у которых annualTurnover больше заданного значения.
+      parameters:
+        - name: annualTurnover
+          in: query
+          required: true
+          schema:
+            type: number
+            format: float
+            minimum: 0
+            exclusiveMinimum: true
+      responses:
+        '200':
+          description: Count
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CountResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /organizations/search-by-full-name:
+    get:
+      summary: Search organizations by fullName
+      description: Возвращает массив объектов, у которых fullName содержит заданную подстроку.
+      parameters:
+        - name: substring
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Matching organizations
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/OrganizationList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
 components:
   parameters:
     Id:
@@ -273,6 +333,15 @@ components:
       properties:
         message:
           type: string
+
+    CountResult:
+      type: object
+      xml:
+        name: countResult
+      properties:
+        count:
+          type: integer
+          minimum: 0
 
   responses:
     BadRequest:

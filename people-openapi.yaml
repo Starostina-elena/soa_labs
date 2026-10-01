@@ -19,6 +19,8 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/PersonList'
+        '503':
+          $ref: '#/components/responses/OrganizationServiceUnavailable'
 
     post:
       summary: Create person
@@ -37,6 +39,8 @@ paths:
                 $ref: '#/components/schemas/Person'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '503':
+          $ref: '#/components/responses/OrganizationServiceUnavailable'
 
   /persons/{id}:
     get:
@@ -54,8 +58,10 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '503':
+          $ref: '#/components/responses/OrganizationServiceUnavailable'
 
-    put:
+    patch:
       summary: Update person by id
       parameters:
         - $ref: '#/components/parameters/Id'
@@ -76,6 +82,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '503':
+          $ref: '#/components/responses/OrganizationServiceUnavailable'
 
     delete:
       summary: Mark person as deleted by id
@@ -89,6 +97,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '503':
+          $ref: '#/components/responses/OrganizationServiceUnavailable'
 
   /merge/{id1}/{id2}/new-name/new-address:
     post:
@@ -127,6 +137,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '503':
+          $ref: '#/components/responses/OrganizationServiceUnavailable'
 
   /fire/all/{id}:
     post:
@@ -141,6 +153,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '503':
+          $ref: '#/components/responses/OrganizationServiceUnavailable'
 
 components:
   parameters:
@@ -292,7 +306,34 @@ components:
       type: object
       xml:
         name: error
+      required:
+        - timestamp
+        - message
       properties:
+        timestamp:
+          type: string
+          format: date-time
+        message:
+          type: string
+        errors:
+          type: array
+          description: Ошибки по всем невалидным параметрам и полям запроса.
+          xml:
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+
+    ErrorDetail:
+      type: object
+      xml:
+        name: errorDetail
+      required:
+        - parameter
+        - message
+      properties:
+        parameter:
+          type: string
+          description: Имя параметра или поля, в котором найдена ошибка.
         message:
           type: string
 
@@ -305,6 +346,12 @@ components:
             $ref: '#/components/schemas/Error'
     NotFound:
       description: Not found
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
+    OrganizationServiceUnavailable:
+      description: Organizations service unavailable
       content:
         application/xml:
           schema:

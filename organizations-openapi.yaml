@@ -412,7 +412,34 @@ components:
       type: object
       xml:
         name: error
+      required:
+        - timestamp
+        - message
       properties:
+        timestamp:
+          type: string
+          format: date-time
+        message:
+          type: string
+        errors:
+          type: array
+          description: Ошибки по всем невалидным параметрам и полям запроса.
+          xml:
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+
+    ErrorDetail:
+      type: object
+      xml:
+        name: errorDetail
+      required:
+        - parameter
+        - message
+      properties:
+        parameter:
+          type: string
+          description: Имя параметра или поля, в котором найдена ошибка.
         message:
           type: string
 

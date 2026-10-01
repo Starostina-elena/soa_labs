@@ -8,88 +8,6 @@ servers:
 
 paths:
   /organizations:
-    get:
-      summary: Get organizations
-      description: Получение массива организаций с фильтрацией, сортировкой и пагинацией.
-      parameters:
-        - name: page
-          in: query
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-        - name: size
-          in: query
-          schema:
-            type: integer
-            minimum: 1
-            default: 10
-        - name: sort
-          in: query
-          description: Поля через запятую. Минус означает DESC name,-annualTurnover.
-          schema:
-            type: string
-        - name: id
-          in: query
-          schema:
-            type: integer
-            format: int64
-            minimum: 1
-        - name: name
-          in: query
-          schema:
-            type: string
-            minLength: 1
-        - name: coordinates.x
-          in: query
-          schema:
-            type: integer
-            format: int64
-            maximum: 775
-        - name: coordinates.y
-          in: query
-          schema:
-            type: integer
-            format: int64
-        - name: creationDate
-          in: query
-          schema:
-            type: string
-            format: date-time
-        - name: annualTurnover
-          in: query
-          schema:
-            type: number
-            format: float
-            minimum: 0
-            exclusiveMinimum: true
-        - name: fullName
-          in: query
-          schema:
-            type: string
-        - name: type
-          in: query
-          schema:
-            $ref: '#/components/schemas/OrganizationType'
-        - name: postalAddress.street
-          in: query
-          schema:
-            type: string
-            minLength: 1
-        - name: postalAddress.zipCode
-          in: query
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Organizations page
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/OrganizationList'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-
     post:
       summary: Create organization
       requestBody:
@@ -105,6 +23,26 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /organizations/search:
+    post:
+      summary: Search organizations
+      description: Получение массива организаций с фильтрацией, сортировкой и пагинацией.
+      requestBody:
+        required: false
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/OrganizationListRequest'
+      responses:
+        '200':
+          description: Organizations page
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/OrganizationList'
         '400':
           $ref: '#/components/responses/BadRequest'
 
@@ -200,27 +138,6 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
 
-  /organizations/search-by-full-name:
-    get:
-      summary: Search organizations by fullName
-      description: Возвращает массив объектов, у которых fullName содержит заданную подстроку.
-      parameters:
-        - name: substring
-          in: query
-          required: true
-          schema:
-            type: string
-            minLength: 1
-      responses:
-        '200':
-          description: Matching organizations
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/OrganizationList'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-
 components:
   parameters:
     Id:
@@ -233,6 +150,151 @@ components:
         minimum: 1
 
   schemas:
+    OrganizationListRequest:
+      type: object
+      xml:
+        name: organizationListRequest
+      properties:
+        page:
+          type: integer
+          minimum: 1
+          default: 1
+        size:
+          type: integer
+          minimum: 1
+          default: 10
+        sort:
+          type: array
+          description: Поля сортировки в порядке приоритета. Префикс "-" означает DESC.
+          xml:
+            wrapped: true
+          items:
+            type: string
+            pattern: ^-?(id|name|coordinates\.x|coordinates\.y|creationDate|annualTurnover|fullName|type|postalAddress\.street|postalAddress\.zipCode)$
+            example: name
+        filters:
+          $ref: '#/components/schemas/OrganizationFilters'
+
+    OrganizationFilters:
+      type: object
+      description: |
+        Набор фильтров для списка организаций. Для числовых полей доступны eq, gt, gte, lt, lte.
+        Для строковых полей доступны eq и contains для поиска по подстроке.
+      xml:
+        name: filters
+      properties:
+        id:
+          $ref: '#/components/schemas/Int64Filter'
+        name:
+          $ref: '#/components/schemas/StringFilter'
+        coordinates:
+          $ref: '#/components/schemas/CoordinatesFilter'
+        creationDate:
+          $ref: '#/components/schemas/DateTimeFilter'
+        annualTurnover:
+          $ref: '#/components/schemas/FloatFilter'
+        fullName:
+          $ref: '#/components/schemas/StringFilter'
+        type:
+          $ref: '#/components/schemas/OrganizationTypeFilter'
+        postalAddress:
+          $ref: '#/components/schemas/AddressFilter'
+
+    CoordinatesFilter:
+      type: object
+      properties:
+        x:
+          $ref: '#/components/schemas/Int64Filter'
+        y:
+          $ref: '#/components/schemas/Int64Filter'
+
+    AddressFilter:
+      type: object
+      properties:
+        street:
+          $ref: '#/components/schemas/StringFilter'
+        zipCode:
+          $ref: '#/components/schemas/StringFilter'
+
+    Int64Filter:
+      type: object
+      properties:
+        eq:
+          type: integer
+          format: int64
+        gt:
+          type: integer
+          format: int64
+        gte:
+          type: integer
+          format: int64
+        lt:
+          type: integer
+          format: int64
+        lte:
+          type: integer
+          format: int64
+
+    DateTimeFilter:
+      type: object
+      properties:
+        eq:
+          type: string
+          format: date-time
+        gt:
+          type: string
+          format: date-time
+        gte:
+          type: string
+          format: date-time
+        lt:
+          type: string
+          format: date-time
+        lte:
+          type: string
+          format: date-time
+
+    FloatFilter:
+      type: object
+      properties:
+        eq:
+          type: number
+          format: float
+        gt:
+          type: number
+          format: float
+        gte:
+          type: number
+          format: float
+        lt:
+          type: number
+          format: float
+        lte:
+          type: number
+          format: float
+
+    StringFilter:
+      type: object
+      properties:
+        eq:
+          type: string
+          minLength: 1
+        contains:
+          type: string
+          minLength: 1
+
+    OrganizationTypeFilter:
+      type: object
+      properties:
+        eq:
+          $ref: '#/components/schemas/OrganizationType'
+        in:
+          type: array
+          xml:
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/OrganizationType'
+
     Organization:
       allOf:
         - $ref: '#/components/schemas/OrganizationInput'
@@ -285,6 +347,7 @@ components:
       type: object
       required:
         - x
+        - y
       properties:
         x:
           type: integer

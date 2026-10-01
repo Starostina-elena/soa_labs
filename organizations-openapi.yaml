@@ -63,7 +63,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-    put:
+    patch:
       summary: Update organization by id
       parameters:
         - $ref: '#/components/parameters/Id'
@@ -86,12 +86,13 @@ paths:
           $ref: '#/components/responses/NotFound'
 
     delete:
-      summary: Delete organization by id
+      summary: Mark organization as deleted by id
+      description: Помечает организацию удаленной
       parameters:
         - $ref: '#/components/parameters/Id'
       responses:
         '204':
-          description: Deleted
+          description: Marked as deleted
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -99,8 +100,8 @@ paths:
 
   /organizations/type/{type}:
     delete:
-      summary: Delete one organization by type
-      description: Удаляет один любой объект, значение type которого равно заданному.
+      summary: Mark one organization as deleted by type
+      description: Помечает удаленным один любой объект, значение type которого равно заданному.
       parameters:
         - name: type
           in: path
@@ -109,13 +110,13 @@ paths:
             $ref: '#/components/schemas/OrganizationType'
       responses:
         '204':
-          description: Deleted
+          description: Marked as deleted
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /organizations/count-by-annual-turnover:
+  /organizations/count-annual-turnover:
     get:
       summary: Count organizations by annualTurnover
       description: Возвращает количество объектов, у которых annualTurnover больше заданного значения.
@@ -311,6 +312,9 @@ components:
             creationDate:
               type: string
               format: date-time
+              readOnly: true
+            deleted:
+              type: boolean
               readOnly: true
       xml:
         name: organization

@@ -78,12 +78,13 @@ paths:
           $ref: '#/components/responses/NotFound'
 
     delete:
-      summary: Delete person by id
+      summary: Mark person as deleted by id
+      description: Помечает сотрудника удаленным
       parameters:
         - $ref: '#/components/parameters/Id'
       responses:
         '204':
-          description: Deleted
+          description: Marked as deleted
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -164,6 +165,9 @@ components:
               type: integer
               format: int64
               minimum: 1
+              readOnly: true
+            deleted:
+              type: boolean
               readOnly: true
             organizations:
               type: array

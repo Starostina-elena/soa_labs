@@ -11,8 +11,7 @@ paths:
     get:
       summary: Search organizations
       description: |
-        Получение массива организаций с фильтрацией, сортировкой и пагинацией.
-        Фильтры передаются как `<поле>.<оператор>`, например `name.contains` или `annualTurnover.gte`.
+        Получение массива организаций с фильтрацией, сортировкой и пагинацией
       parameters:
         - name: page
           in: query

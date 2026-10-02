@@ -11,14 +11,7 @@ paths:
     get:
       summary: Search organizations
       description: |
-        Получение массива организаций с фильтрацией, сортировкой и пагинацией.
-
-        Каждый критерий фильтрации передается отдельным параметром `filter`
-        в формате `поле.оператор=значение`. Например:
-        `?filter=id.eq=75&filter=name.contains=Lab`.
-
-        Полный пример запроса:
-        `?page=2&size=20&sort=name&sort=-annualTurnover&filter=id.gte=10&filter=type.eq=PUBLIC`.
+        Получение массива организаций с фильтрацией, сортировкой и пагинацией
       parameters:
         - name: page
           in: query
@@ -53,13 +46,7 @@ paths:
         - name: filter
           in: query
           description: |
-            Критерии фильтрации в формате `поле.оператор=значение`, применяемые через AND.
-            Параметр можно повторять: `filter=id.eq=75&filter=name.contains=Lab`.
-
-            Операторы `eq`, `gt`, `gte`, `lt`, `lte` доступны для чисел и даты;
-            `eq`, `contains` — для строк; `eq`, `in` — для типа организации.
-            Значения оператора `in` разделяются запятыми, например
-            `filter=type.in=PUBLIC,TRUST`.
+            Критерии фильтрации в формате `поле.оператор=значение`
           style: form
           explode: true
           schema:

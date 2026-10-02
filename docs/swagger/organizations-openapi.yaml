@@ -11,7 +11,14 @@ paths:
     get:
       summary: Search organizations
       description: |
-        Получение массива организаций с фильтрацией, сортировкой и пагинацией
+        Получение массива организаций с фильтрацией, сортировкой и пагинацией.
+
+        Каждый критерий фильтрации передается отдельным параметром `filter`
+        в формате `поле.оператор=значение`. Например:
+        `?filter=id.eq=75&filter=name.contains=Lab`.
+
+        Полный пример запроса:
+        `?page=2&size=20&sort=name&sort=-annualTurnover&filter=id.gte=10&filter=type.eq=PUBLIC`.
       parameters:
         - name: page
           in: query
@@ -19,15 +26,19 @@ paths:
             type: integer
             minimum: 1
             default: 1
+            example: 2
         - name: size
           in: query
           schema:
             type: integer
             minimum: 1
             default: 10
+            example: 20
         - name: sort
           in: query
-          description: Поля сортировки в порядке приоритета. Префикс "-" означает DESC.
+          description: |
+            Поля сортировки в порядке приоритета. Префикс `-` означает DESC.
+            Параметр можно повторять: `sort=name&sort=-annualTurnover`.
           style: form
           explode: true
           schema:
@@ -36,150 +47,54 @@ paths:
               type: string
               pattern: ^-?(id|name|coordinates\.x|coordinates\.y|creationDate|annualTurnover|fullName|type|postalAddress\.street|postalAddress\.zipCode)$
               example: name
-        - name: id.eq
+          example:
+            - name
+            - -annualTurnover
+        - name: filter
           in: query
-          schema:
-            $ref: '#/components/schemas/Int64FilterValue'
-        - name: id.gt
-          in: query
-          schema:
-            $ref: '#/components/schemas/Int64FilterValue'
-        - name: id.gte
-          in: query
-          schema:
-            $ref: '#/components/schemas/Int64FilterValue'
-        - name: id.lt
-          in: query
-          schema:
-            $ref: '#/components/schemas/Int64FilterValue'
-        - name: id.lte
-          in: query
-          schema:
-            $ref: '#/components/schemas/Int64FilterValue'
-        - name: name.eq
-          in: query
-          schema:
-            $ref: '#/components/schemas/StringFilterValue'
-        - name: name.contains
-          in: query
-          schema:
-            $ref: '#/components/schemas/StringFilterValue'
-        - name: coordinates.x.eq
-          in: query
-          schema:
-            $ref: '#/components/schemas/Int64FilterValue'
-        - name: coordinates.x.gt
-          in: query
-          schema:
-            $ref: '#/components/schemas/Int64FilterValue'
-        - name: coordinates.x.gte
-          in: query
-          schema:
-            $ref: '#/components/schemas/Int64FilterValue'
-        - name: coordinates.x.lt
-          in: query
-          schema:
-            $ref: '#/components/schemas/Int64FilterValue'
-        - name: coordinates.x.lte
-          in: query
-          schema:
-            $ref: '#/components/schemas/Int64FilterValue'
-        - name: coordinates.y.eq
-          in: query
-          schema:
-            $ref: '#/components/schemas/Int64FilterValue'
-        - name: coordinates.y.gt
-          in: query
-          schema:
-            $ref: '#/components/schemas/Int64FilterValue'
-        - name: coordinates.y.gte
-          in: query
-          schema:
-            $ref: '#/components/schemas/Int64FilterValue'
-        - name: coordinates.y.lt
-          in: query
-          schema:
-            $ref: '#/components/schemas/Int64FilterValue'
-        - name: coordinates.y.lte
-          in: query
-          schema:
-            $ref: '#/components/schemas/Int64FilterValue'
-        - name: creationDate.eq
-          in: query
-          schema:
-            $ref: '#/components/schemas/DateTimeFilterValue'
-        - name: creationDate.gt
-          in: query
-          schema:
-            $ref: '#/components/schemas/DateTimeFilterValue'
-        - name: creationDate.gte
-          in: query
-          schema:
-            $ref: '#/components/schemas/DateTimeFilterValue'
-        - name: creationDate.lt
-          in: query
-          schema:
-            $ref: '#/components/schemas/DateTimeFilterValue'
-        - name: creationDate.lte
-          in: query
-          schema:
-            $ref: '#/components/schemas/DateTimeFilterValue'
-        - name: annualTurnover.eq
-          in: query
-          schema:
-            $ref: '#/components/schemas/FloatFilterValue'
-        - name: annualTurnover.gt
-          in: query
-          schema:
-            $ref: '#/components/schemas/FloatFilterValue'
-        - name: annualTurnover.gte
-          in: query
-          schema:
-            $ref: '#/components/schemas/FloatFilterValue'
-        - name: annualTurnover.lt
-          in: query
-          schema:
-            $ref: '#/components/schemas/FloatFilterValue'
-        - name: annualTurnover.lte
-          in: query
-          schema:
-            $ref: '#/components/schemas/FloatFilterValue'
-        - name: fullName.eq
-          in: query
-          schema:
-            $ref: '#/components/schemas/StringFilterValue'
-        - name: fullName.contains
-          in: query
-          schema:
-            $ref: '#/components/schemas/StringFilterValue'
-        - name: type.eq
-          in: query
-          schema:
-            $ref: '#/components/schemas/OrganizationType'
-        - name: type.in
-          in: query
+          description: |
+            Критерии фильтрации в формате `поле.оператор=значение`, применяемые через AND.
+            Параметр можно повторять: `filter=id.eq=75&filter=name.contains=Lab`.
+
+            Операторы `eq`, `gt`, `gte`, `lt`, `lte` доступны для чисел и даты;
+            `eq`, `contains` — для строк; `eq`, `in` — для типа организации.
+            Значения оператора `in` разделяются запятыми, например
+            `filter=type.in=PUBLIC,TRUST`.
           style: form
           explode: true
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/OrganizationType'
-        - name: postalAddress.street.eq
-          in: query
-          schema:
-            $ref: '#/components/schemas/StringFilterValue'
-        - name: postalAddress.street.contains
-          in: query
-          schema:
-            $ref: '#/components/schemas/StringFilterValue'
-        - name: postalAddress.zipCode.eq
-          in: query
-          schema:
-            $ref: '#/components/schemas/StringFilterValue'
-        - name: postalAddress.zipCode.contains
-          in: query
-          schema:
-            $ref: '#/components/schemas/StringFilterValue'
+              $ref: '#/components/schemas/OrganizationFilter'
+          examples:
+            byId:
+              summary: По идентификатору
+              value:
+                - id.eq=75
+            byText:
+              summary: По строковым полям
+              value:
+                - name.contains=Lab
+                - fullName.eq=Research Laboratory
+                - postalAddress.street.contains=Lenina
+                - postalAddress.zipCode.eq=101000
+            byNumbersAndDate:
+              summary: По числам и дате
+              value:
+                - coordinates.x.lte=500
+                - coordinates.y.gt=-10
+                - annualTurnover.gte=1000000.5
+                - creationDate.lt=2026-01-01T00:00:00Z
+            byType:
+              summary: По нескольким типам
+              value:
+                - type.in=PUBLIC,TRUST
+            combined:
+              summary: Несколько условий
+              value:
+                - id.gte=10
+                - name.contains=Lab
+                - type.eq=PUBLIC
       responses:
         '200':
           description: Organizations page
@@ -268,6 +183,7 @@ paths:
         - name: type
           in: path
           required: true
+          example: PUBLIC
           schema:
             $ref: '#/components/schemas/OrganizationType'
       responses:
@@ -291,6 +207,7 @@ paths:
             format: float
             minimum: 0
             exclusiveMinimum: true
+            example: 1000000.5
       responses:
         '200':
           description: Count
@@ -311,23 +228,15 @@ components:
         type: integer
         format: int64
         minimum: 1
+        example: 75
 
   schemas:
-    Int64FilterValue:
-      type: integer
-      format: int64
-
-    DateTimeFilterValue:
+    OrganizationFilter:
       type: string
-      format: date-time
-
-    FloatFilterValue:
-      type: number
-      format: float
-
-    StringFilterValue:
-      type: string
-      minLength: 1
+      description: Один критерий фильтрации в формате `поле.оператор=значение`.
+      pattern: >-
+        ^(?:(?:id|coordinates\.x|coordinates\.y)\.(?:eq|gt|gte|lt|lte)=-?\d+|annualTurnover\.(?:eq|gt|gte|lt|lte)=-?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?|creationDate\.(?:eq|gt|gte|lt|lte)=[^&]+|(?:name|fullName|postalAddress\.street|postalAddress\.zipCode)\.(?:eq|contains)=.+|type\.eq=(?:PUBLIC|TRUST|OPEN_JOINT_STOCK_COMPANY)|type\.in=(?:PUBLIC|TRUST|OPEN_JOINT_STOCK_COMPANY)(?:,(?:PUBLIC|TRUST|OPEN_JOINT_STOCK_COMPANY))*)$
+      example: id.eq=75
 
     Organization:
       allOf:
@@ -342,13 +251,16 @@ components:
               format: int64
               minimum: 1
               readOnly: true
+              example: 75
             creationDate:
               type: string
               format: date-time
               readOnly: true
+              example: '2026-09-15T12:30:00Z'
             deleted:
               type: boolean
               readOnly: true
+              example: false
       xml:
         name: organization
 
@@ -366,6 +278,7 @@ components:
         name:
           type: string
           minLength: 1
+          example: Research Lab
         coordinates:
           $ref: '#/components/schemas/Coordinates'
         annualTurnover:
@@ -373,8 +286,10 @@ components:
           format: float
           minimum: 0
           exclusiveMinimum: true
+          example: 1500000.5
         fullName:
           type: string
+          example: Research Laboratory LLC
         type:
           $ref: '#/components/schemas/OrganizationType'
         postalAddress:
@@ -390,9 +305,11 @@ components:
           type: integer
           format: int64
           maximum: 775
+          example: 120
         y:
           type: integer
           format: int64
+          example: -45
 
     Address:
       type: object
@@ -403,8 +320,10 @@ components:
         street:
           type: string
           minLength: 1
+          example: Lenina street, 10
         zipCode:
           type: string
+          example: '101000'
 
     OrganizationType:
       type: string
@@ -413,6 +332,7 @@ components:
         - PUBLIC
         - TRUST
         - OPEN_JOINT_STOCK_COMPANY
+      example: PUBLIC
 
     OrganizationList:
       type: object
@@ -421,10 +341,13 @@ components:
       properties:
         page:
           type: integer
+          example: 2
         size:
           type: integer
+          example: 20
         total:
           type: integer
+          example: 42
         items:
           type: array
           xml:
@@ -440,6 +363,7 @@ components:
         count:
           type: integer
           minimum: 0
+          example: 12
 
     Error:
       type: object
@@ -452,8 +376,10 @@ components:
         timestamp:
           type: string
           format: date-time
+          example: '2026-09-15T12:30:00Z'
         message:
           type: string
+          example: Request validation failed
         errors:
           type: array
           description: Ошибки по всем невалидным параметрам и полям запроса.
@@ -473,8 +399,10 @@ components:
         parameter:
           type: string
           description: Имя параметра или поля, в котором найдена ошибка.
+          example: filter[0]
         message:
           type: string
+          example: 'Invalid filter expression: id.eq=abc'
 
   responses:
     BadRequest:

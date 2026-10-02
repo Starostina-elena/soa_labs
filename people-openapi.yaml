@@ -113,6 +113,7 @@ paths:
             type: integer
             format: int64
             minimum: 1
+            example: 75
         - name: id2
           in: path
           required: true
@@ -120,6 +121,7 @@ paths:
             type: integer
             format: int64
             minimum: 1
+            example: 108
       requestBody:
         required: true
         content:
@@ -166,6 +168,7 @@ components:
         type: integer
         format: int64
         minimum: 1
+        example: 75
 
   schemas:
     Person:
@@ -180,9 +183,11 @@ components:
               format: int64
               minimum: 1
               readOnly: true
+              example: 501
             deleted:
               type: boolean
               readOnly: true
+              example: false
             organizations:
               type: array
               description: Организации, в которых работает человек.
@@ -204,6 +209,7 @@ components:
         name:
           type: string
           minLength: 1
+          example: Anna Petrova
         organizationIds:
           type: array
           description: ID организаций для связи many-to-many.
@@ -213,6 +219,7 @@ components:
             type: integer
             format: int64
             minimum: 1
+            example: 75
 
     PersonList:
       type: object
@@ -236,8 +243,10 @@ components:
           type: integer
           format: int64
           minimum: 1
+          example: 75
         name:
           type: string
+          example: Research Lab
 
     OrganizationInput:
       type: object
@@ -254,6 +263,7 @@ components:
         name:
           type: string
           minLength: 1
+          example: Merged Research Group
         coordinates:
           $ref: '#/components/schemas/Coordinates'
         annualTurnover:
@@ -261,8 +271,10 @@ components:
           format: float
           minimum: 0
           exclusiveMinimum: true
+          example: 2500000.5
         fullName:
           type: string
+          example: Merged Research Group LLC
         type:
           $ref: '#/components/schemas/OrganizationType'
         postalAddress:
@@ -278,9 +290,11 @@ components:
           type: integer
           format: int64
           maximum: 775
+          example: 120
         y:
           type: integer
           format: int64
+          example: -45
 
     Address:
       type: object
@@ -291,8 +305,10 @@ components:
         street:
           type: string
           minLength: 1
+          example: Lenina street, 10
         zipCode:
           type: string
+          example: '101000'
 
     OrganizationType:
       type: string
@@ -301,6 +317,7 @@ components:
         - PUBLIC
         - TRUST
         - OPEN_JOINT_STOCK_COMPANY
+      example: PUBLIC
 
     Error:
       type: object
@@ -313,8 +330,10 @@ components:
         timestamp:
           type: string
           format: date-time
+          example: '2026-09-15T12:30:00Z'
         message:
           type: string
+          example: Request validation failed
         errors:
           type: array
           description: Ошибки по всем невалидным параметрам и полям запроса.
@@ -334,8 +353,10 @@ components:
         parameter:
           type: string
           description: Имя параметра или поля, в котором найдена ошибка.
+          example: organizationIds[0]
         message:
           type: string
+          example: Organization with id 75 was not found
 
   responses:
     BadRequest:

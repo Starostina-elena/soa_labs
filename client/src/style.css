@@ -1,0 +1,181 @@
+body {
+    margin: 0;
+    background: #ededed;
+    color: #222;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+}
+
+main {
+    max-width: 1400px;
+    margin: 24px auto;
+    padding: 0 20px;
+}
+
+h1 {
+    font-size: 26px;
+}
+
+h2 {
+    font-size: 20px;
+    margin-top: 0;
+}
+
+h3 {
+    font-size: 16px;
+}
+
+nav {
+    margin-bottom: 20px;
+}
+
+section {
+    background: #fafafa;
+    border: 1px solid #c5cec5;
+    padding: 18px;
+    margin-bottom: 18px;
+}
+
+fieldset {
+    border: 1px solid #c5cec5;
+    padding: 12px;
+    margin: 12px 0;
+    min-width: 0;
+}
+
+legend {
+    padding: 0 5px;
+}
+
+button {
+    background: #55795b;
+    color: white;
+    border: 1px solid #45664b;
+    padding: 7px 12px;
+    margin: 4px 6px 4px 0;
+    font: inherit;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #436448;
+}
+
+button.secondary {
+    background: #e0e6e0;
+    color: #263529;
+    border-color: #aab6aa;
+}
+
+button.secondary:hover {
+    background: #d0dbd0;
+}
+
+button:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
+input,
+select {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    margin-top: 5px;
+    padding: 7px;
+    font: inherit;
+    border: 1px solid #aaa;
+    background: white;
+    color: #222;
+}
+
+label {
+    display: block;
+    min-width: 140px;
+}
+
+.fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.row {
+    display: flex;
+    gap: 10px;
+    align-items: end;
+    flex-wrap: wrap;
+    margin: 12px 0;
+}
+
+.row input[type='number'] {
+    max-width: 180px;
+}
+
+.row button {
+    margin-bottom: 0;
+}
+
+.table-wrap {
+    overflow-x: auto;
+    margin-top: 12px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+th,
+td {
+    padding: 8px;
+    border: 1px solid #c6ccc6;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+}
+
+th {
+    background: #dce6dc;
+}
+
+td button {
+    font-size: 13px;
+    padding: 5px 8px;
+}
+
+.hint {
+    color: #555;
+    margin-top: 0;
+}
+
+.success {
+    background: #ddebdc;
+    border: 1px solid #9bb59a;
+    padding: 12px;
+}
+
+.error {
+    background: #f6e2df;
+    border: 1px solid #be8f87;
+    padding: 0 12px;
+}
+
+@media (max-width: 600px) {
+    main {
+        padding: 0 10px;
+        margin-top: 15px;
+    }
+    section {
+        padding: 12px;
+    }
+    h1 {
+        font-size: 22px;
+    }
+    .row label {
+        width: 100%;
+    }
+
+}
